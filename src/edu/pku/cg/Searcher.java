@@ -62,6 +62,7 @@ public class Searcher {
 					hitsPerPage, true);
 			searcher.search(q, collector);
 			hits = collector.topDocs().scoreDocs;
+	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -75,6 +76,7 @@ public class Searcher {
 				System.out.println("Found " + hits.length + " hits.");
 				for (int i = 0; i < hits.length; ++i) {
 					int docId = hits[i].doc;
+			
 					Document d = searcher.doc(docId);
 					// Terms tv = searcher.getIndexReader().getTermVector(docId,
 					// "content");

@@ -1,11 +1,23 @@
 package edu.pku.cg;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.CharacterIterator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.Lexer;
+import org.antlr.runtime.Token;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
@@ -43,7 +55,7 @@ public class Test {
 
 	}
 
-	public static void main(String args[]) {
+	public static void main6(String args[]) {
 		try {
 			Directory index = FSDirectory
 					.open(new File("D:\\code_respo\\index"));
@@ -94,5 +106,32 @@ public class Test {
 			}
 		}
 		return list;
+	}
+
+	public static void main(String args[]) throws Exception {
+		FileReader fr = new FileReader("python.tokens");
+		BufferedReader br = new BufferedReader(fr);
+		Map<Integer, String> map = new HashMap<Integer, String>();
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			map.put(Integer.valueOf((line.split("=")[1])), line.split("=")[0]);
+		}
+		String path = "D:/code_respo/query.py";
+		ANTLRInputStream input = null;
+		try {
+			input = new ANTLRInputStream(new FileInputStream(new File(path)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Lexer lex = new PythonLexer(input);
+		Token token = null;
+		int count = 0;
+		PrintWriter pw = new PrintWriter("tokens.txt");
+		while ((token = lex.nextToken()).getType() != -1) {
+			pw.println(count++ + " : \"" + token.getText() + "\"   "
+					+ map.get(token.getType()));
+
+		}
+		pw.close();
 	}
 }

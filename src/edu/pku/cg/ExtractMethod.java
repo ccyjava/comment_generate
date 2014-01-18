@@ -37,31 +37,54 @@ public class ExtractMethod {
 		return code_collection;
 	}
 
-	public String printCodeCollection() {
+	public List<CodeMethod> getFilteredCode_collection(int threshold) {
+		List<CodeMethod> filter_code_collection = new LinkedList<CodeMethod>();
+		for (CodeMethod cm : code_collection) {
+			if (cm.body.size() > threshold) {
+				filter_code_collection.add(cm);
+			}
+		}
+		return filter_code_collection;
+	}
+
+	public String methodToString(CodeMethod cm) {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
-		for (CodeMethod cm : code_collection) {
-
-			pw.println(cm.name);
-			for (String line : cm.body) {
-				pw.println(line);
-			}
-			pw.println("\n");
+		pw.println(cm.name);
+		for (String line : cm.body) {
+			pw.println(line);
 		}
-
-		pw.println("================================================================\n\n\n\n");
-		for (CodeMethod cm : code_collection) {
-			pw.println(cm.name);
-			try {
-				for (String line : cm.comment) {
-					pw.println("#" + line);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			pw.println("\n");
-		}
+		pw.println("\n");
 		return sw.toString();
+	}
+
+	public String commentToString(CodeMethod cm) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		pw.println(cm.name);
+		try {
+			for (String line : cm.comment) {
+				pw.println("#" + line);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		pw.println("\n");
+		return sw.toString();
+	}
+
+	public String printCodeCollection() {
+		String result = "";
+		for (CodeMethod cm : code_collection) {
+
+			result += methodToString(cm);
+		}
+
+		result += "================================================================\n\n\n\n";
+		for (CodeMethod cm : code_collection) {
+			result += commentToString(cm);
+		}
+		return result;
 	}
 
 	public void getMethod(Code sourcecode) {
@@ -178,7 +201,7 @@ public class ExtractMethod {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String s;
 			while ((s = br.readLine()) != null) {
-				s=s.replace("	", "    ");
+				s = s.replace("	", "    ");
 				list.add(s);
 			}
 		} catch (Exception e) {
@@ -194,4 +217,5 @@ public class ExtractMethod {
 		}
 		return list.toArray(new String[1]);
 	}
+
 }

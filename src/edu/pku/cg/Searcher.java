@@ -3,6 +3,7 @@ package edu.pku.cg;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,29 +63,37 @@ public class Searcher {
 					hitsPerPage, true);
 			searcher.search(q, collector);
 			hits = collector.topDocs().scoreDocs;
-	
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public void printResult() {
+	public void printResult(double threshold, PrintWriter pw) {
+		if (pw == null) {
+			pw = new PrintWriter(System.out);
+		}
 		try {
 
 			if (hits != null & searcher != null) {
-				System.out.println("Found " + hits.length + " hits.");
+				pw.println("Found " + hits.length + " hits.");
 				for (int i = 0; i < hits.length; ++i) {
+					if (i > 3 && hits[i].score < threshold) {
+						break;
+					}
 					int docId = hits[i].doc;
-			
+
 					Document d = searcher.doc(docId);
 					// Terms tv = searcher.getIndexReader().getTermVector(docId,
 					// "content");
 					// List<String> comments = getComment(d.get("path"));
 
-					System.out.println((i + 1) + ". " + "(" + docId + ")"
-							+ d.get("function_name"));
-					System.out.println(d.get("comment") + "\n");
+					pw.println((i + 1) + ". " + d.get("function_name")
+							+ hits[i].score + "                     "
+							+ d.get("file_path"));
+					pw.println(d.get("comment") + "\n");
+
 					// printComment(comments);
 				}
 			}

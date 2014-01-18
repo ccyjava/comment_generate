@@ -20,7 +20,7 @@ public class Torun {
 		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_40);
 		analyzer = new WhitespaceAnalyzer(Version.LUCENE_40);
 		String index_path = "D:/code_respo/index";
-		String data_path = "D:/code_respo/django";
+		String data_path = "D:/code_respo/respo";
 		String query_path = "D:/code_respo/query.py";
 
 		IndexBuilder ib = new IndexBuilder(data_path);
@@ -43,8 +43,9 @@ public class Torun {
 		while ((s = br.readLine()) != null) {
 			q += s;
 		}
-		searcher.doSearch(QueryParser.escape(q), 10);
-		searcher.printResult();
+		searcher.doSearch(QueryParser.escape(q), searcher.searcher
+				.getIndexReader().maxDoc());
+		searcher.printResult(0.3, null);// set threshold to print
 		searcher.close();
 
 	}
